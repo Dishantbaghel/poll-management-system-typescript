@@ -1,0 +1,62 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.parent{
+    width: 100vw;
+    height: 100vh;
+    background-color: #6D9AC4;
+    padding-top: 100px;
+}
+
+.child{
+    width: 30%;
+    margin: auto;
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.all-inputfield{
+ width: 100%;
+}
+
+
+.btn{
+    background-color: #E62425;
+    color: white;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.form-error{
+    color: red;
+}
+
+.icon-btns{
+    color: #E62425;
+    cursor: pointer;
+}
+
+.icon-btns:hover{
+    color: blue;
+}
+
+.poll-options{
+    border: 1px solid lightgray;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.signUp-dropdown{
+    width: 100%;
+    padding: 10px;
+}
+
+@media (max-width : 1000px) {
+    .child{
+        width: 60%;
+    }
+}

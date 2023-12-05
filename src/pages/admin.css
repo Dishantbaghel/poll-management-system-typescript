@@ -1,0 +1,38 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.admin-parent{
+    width: 100vw;
+    height: 100vh;
+    background-color: #6D9AC4;
+}
+
+.header{
+    text-align: center;
+    color: white;
+}
+
+.container{
+    height: 73vh;
+    overflow-y: auto;
+}
+
+.card-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.poll-options{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.admin-btns{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
