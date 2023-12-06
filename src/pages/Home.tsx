@@ -1,54 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchedAllPolls } from "../redux/reducers/AdminSlice";
-import { dispatch } from "../redux/Store";
 import { useNavigate } from "react-router-dom";
 import { vote } from "../redux/reducers/VoteSlice";
 import { Backdrop, CircularProgress, TablePagination } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AppDispatch } from "../redux/Store";
+import { RootState } from "../redux/reducers";
 
-const Home = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPageOption, setRowsPerPageOption] = useState([5, 10, 15]);
-  const adminLoading = useSelector((state) => state.AdminSlice.isLoading);
-  const listItems = useSelector((state) => state.AdminSlice.data);
+interface Option {
+  option: string;
+}
+
+interface PollData {
+  _id: string;
+  title: string;
+  options: Option[];
+}
+
+const Home: React.FC = () => {
+  const [page, setPage] = useState<number>(0);
+  const dispatch: AppDispatch = useDispatch();
+  const [rowsPerPageOption, setRowsPerPageOption] = useState<number[]>([5, 10, 15]);
+  const adminSliceData = useSelector((state: RootState) => state.AdminSlice);
   const navigate = useNavigate();
-  const [disabledOptions, setDisabledOptions] = useState({});
+  const [disabledOptions, setDisabledOptions] = useState<{ [key: string]: boolean }>({});
 
-  const row = () => {
+  const row = (): number => {
     if (localStorage.getItem("rowpage")) {
-      return JSON.parse(localStorage.getItem("rowpage"));
+      return JSON.parse(localStorage.getItem("rowpage")!);
     }
     return 5;
   };
-  const [rowPerPage, setRowPerPage] = useState(row());
+  const [rowPerPage, setRowPerPage] = useState<number>(row());
 
   useEffect(() => {
     dispatch(fetchedAllPolls());
-    const data = JSON.parse(localStorage.getItem("page"));
+    const data = JSON.parse(localStorage.getItem("page") || "0");
     if (data) {
       setPage(parseInt(data));
     }
 
-    const disabledOptionsFromStorage = {};
-    listItems.forEach((dataList) => {
+    const disabledOptionsFromStorage: { [key: string]: boolean } = {};
+    adminSliceData.data.forEach((dataList: PollData) => {
       const storedVote = localStorage.getItem(`vote_${dataList._id}`);
       disabledOptionsFromStorage[dataList._id] = storedVote !== null;
     });
     setDisabledOptions(disabledOptionsFromStorage);
-  }, [listItems.isSuccess, dispatch]);
+  }, [adminSliceData.isSuccess, dispatch]);
 
   useEffect(() => {
-    localStorage.setItem("page", page);
-    localStorage.setItem("rowpage", rowPerPage);
+    localStorage.setItem("page", page.toString());
+    localStorage.setItem("rowpage", rowPerPage.toString());
   }, [page, rowPerPage]);
 
   const handleLogOut = () => {
     localStorage.clear();
     navigate("/");
-  }
-  const handleVote = (id, opt) => {
+  };
+
+  const handleVote = (id: string, opt: string) => {
     const token = localStorage.getItem("token");
     const header = {
       headers: {
@@ -57,8 +69,8 @@ const Home = () => {
     };
     localStorage.setItem(`vote_${id}`, id);
     const updatedDisabledOptions = { ...disabledOptions, [id]: true };
-  localStorage.setItem("disabledOptions", JSON.stringify(updatedDisabledOptions));
-  localStorage.getItem('disabledOptions')
+    localStorage.setItem("disabledOptions", JSON.stringify(updatedDisabledOptions));
+    localStorage.getItem("disabledOptions");
     dispatch(vote(id, opt, header));
     setDisabledOptions({ ...disabledOptions, [id]: true });
     toast.success("🦄 Thanks for voting!", {
@@ -73,10 +85,11 @@ const Home = () => {
     });
   };
 
-  const handleChangePage = (event, updatePage) => setPage(updatePage);
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, updatePage: number) =>
+    setPage(updatePage);
 
-  const handleRowPerPage = (event) => {
-    setRowPerPage(event.target.value);
+  const handleRowPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowPerPage(parseInt(event.target.value));
     setPage(0);
   };
 
@@ -89,10 +102,10 @@ const Home = () => {
             Log Out
           </button>
         </div>
-        {adminLoading && (
+        {adminSliceData.isLoading && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={adminLoading}
+            open={adminSliceData.isLoading}
           >
             <CircularProgress color="inherit" />
           </Backdrop>
@@ -100,9 +113,9 @@ const Home = () => {
         <div className="container" style={{ wordBreak: "break-word" }}>
           <div className="row">
             <div className="col">
-              {listItems
+              {adminSliceData.data
                 .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                .map((dataList) => (
+                .map((dataList: PollData) => (
                   <div className="card mt-3" key={dataList._id}>
                     <div
                       className="card-header "
@@ -116,7 +129,7 @@ const Home = () => {
                       </h5>
                     </div>
                     <div className="card-body">
-                      {dataList.options.map((option) => (
+                      {dataList.options.map((option: Option) => (
                         <div className="form-check" key={option.option}>
                           <div className="d-flex justify-content-between">
                             <div
@@ -130,7 +143,7 @@ const Home = () => {
                                   type="radio"
                                   onClick={() => handleVote(dataList._id, option.option)}
                                   name={dataList._id}
-                                  disabled={localStorage.getItem(`vote_${dataList._id}`)}
+                                  disabled={!!localStorage.getItem(`vote_${dataList._id}`)}
                                 />
                                 {option.option}
                               </div>
@@ -153,8 +166,8 @@ const Home = () => {
           <TablePagination
             component="div"
             rowsPerPageOptions={rowsPerPageOption}
-            count={listItems.length}
-            page={!listItems.length || listItems.length <= 0 ? 0 : page}
+            count={adminSliceData.data.length}
+            page={!adminSliceData.data.length || adminSliceData.data.length <= 0 ? 0 : page}
             rowsPerPage={rowPerPage}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleRowPerPage}

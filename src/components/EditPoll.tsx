@@ -1,12 +1,14 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TextField } from "@mui/material";
-import { dispatch } from "../redux/Store";
+import { AppDispatch } from "../redux/Store";
 import { updateTitle } from "../redux/reducers/EditPollSlice";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
 
 const EditPoll = () => {
+  const dispatch: AppDispatch = useDispatch();
   const [inputTitle, setInputTitle] = useState("");
   const [disableSaveBtn, setDisableSaveBtn] = useState(true);
   const { edittitleId } = useParams();

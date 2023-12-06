@@ -1,7 +1,14 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../utilities/axios';
 
-export const deletePoll = createAsyncThunk('deletePoll/deletePoll', async (id) => {
+interface StateType {
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  data: Record<string, any>;
+}
+
+export const deletePoll = createAsyncThunk('deletePoll/deletePoll', async (id: string) => {
   try {
     const response = await axiosInstance.delete(`delete_poll?id=${id}`, {
       id,
@@ -19,7 +26,7 @@ const deletePollSlice = createSlice({
     isSuccess: false,
     isError: false,
     data: {},
-  },
+  } as StateType,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -27,7 +34,7 @@ const deletePollSlice = createSlice({
         state.isLoading = true;
         state.isError = false;
       })
-      .addCase(deletePoll.fulfilled, (state, action) => {
+      .addCase(deletePoll.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.data = action.payload;

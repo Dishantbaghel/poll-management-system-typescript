@@ -9,12 +9,13 @@ import AddOptions from "../components/AddOptions";
 import PrivateRoute from "./PrivateRoute";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { RootState } from "../redux/reducers";
 
 const Router = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
-  const loginSlice = useSelector((state) => state.loginSlice);
+  const loginSlice = useSelector((state : RootState) => state.loginSlice);
   useEffect(() => {
     localStorage.getItem("token");
     localStorage.getItem("role");

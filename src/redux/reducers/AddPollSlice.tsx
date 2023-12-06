@@ -1,27 +1,34 @@
-import {createSlice} from '@reduxjs/toolkit'
-import { dispatch } from '../Store';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit'
+import { AppDispatch } from '../Store';
 import axiosInstance from '../../utilities/axios';
+
+interface StateType {
+  isLoading : boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  data: Record<string, any>;
+}
 
 const AddPollSlice = createSlice({
     name: "addPoll",
-    initialState :{
+    initialState : {
         isLoading: false,
         isSuccess: false,
         isError: false,
         data: {},
-      },
+      } as StateType,
     reducers: {
       startLoading(state) {
         state.isLoading = true;
         state.isError = false;
       },
-      loginSuccess(state, action) {
+      loginSuccess(state, action : PayloadAction<any>) {
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.data = { ...action.payload };
       },
-      hasError(state, action) {
+      hasError(state, action : PayloadAction<any>) {
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;
@@ -36,8 +43,8 @@ const AddPollSlice = createSlice({
     },
   });
 
-  export function AddPoll(newTitle, newOptionsList){
-    return async()=>{
+  export function AddPoll(newTitle: string, newOptionsList: string[]){
+    return async(dispatch : AppDispatch)=>{
         dispatch(AddPollSlice.actions.startLoading());
         try {
             if (newOptionsList.length === 1) {

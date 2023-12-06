@@ -1,5 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../../utilities/axios";
+import { AppDispatch } from "../Store";
+
+interface StateType {
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  data: any[];
+}
 
 const optionsSlice = createSlice({
   name: "addOptions",
@@ -8,19 +16,19 @@ const optionsSlice = createSlice({
     isSuccess: false,
     isError: false,
     data: {},
-  },
+  } as StateType,
   reducers: {
     startLoading(state) {
       state.isLoading = true;
       state.isError = false;
     },
-    loginSuccess(state, action) {
+    loginSuccess(state, action: PayloadAction<any>) {
       state.isLoading = false;
       state.isError = false;
       state.isSuccess = true;
       state.data = { ...action.payload };
     },
-    hasError(state, action) {
+    hasError(state, action: PayloadAction<any>) {
       state.isError = true;
       state.isLoading = false;
       state.isSuccess = false;
@@ -30,12 +38,14 @@ const optionsSlice = createSlice({
       state.isError = false;
       state.isLoading = false;
       state.isSuccess = false;
-      state.data = {};
+      state.data = [];
     },
   },
 });
 
-export const updateTitle = (value, id) => async (dispatch) => {
+export const updateTitle = (value: string, id: string) => async (
+  dispatch: AppDispatch
+) => {
   dispatch(optionsSlice.actions.startLoading());
   try {
     const response = await axiosInstance.put(

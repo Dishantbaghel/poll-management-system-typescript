@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { dispatch } from "../redux/Store";
-import { useSelector } from "react-redux";
+import { AppDispatch } from "../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { resetReducer, signup } from "../redux/reducers/SignUpSlice";
 import { useFormik } from "formik";
@@ -8,15 +8,12 @@ import { signupSchema } from "../schemas";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Backdrop, CircularProgress, TextField } from '@mui/material'
+import { RootState } from "../redux/reducers";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const signupSlice = useSelector((state) => state.SignUpSlice);
-  const status = useSelector((state) => state.SignUpSlice.isLoading);
-
-  useEffect(() => {
-    dispatch(signup());
-    }, []);
+  const signupSlice = useSelector((state: RootState) => state.SignUpSlice);
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (signupSlice.isSuccess && !signupSlice.data.message) {
@@ -46,7 +43,7 @@ const SignUp = () => {
       validationSchema: signupSchema,
       onSubmit: (values) => {
         dispatch(signup(values));
-        if (status) {
+        if (signupSlice.isLoading) {
           dispatch(resetReducer());
         }
       },
@@ -54,11 +51,11 @@ const SignUp = () => {
 
   return (
     <div className="parent">
-    {status && 
+    {signupSlice.isLoading && 
       <Backdrop
   sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-  open={open}
->
+  open={signupSlice.isLoading}
+> 
   <CircularProgress color="inherit" />
 </Backdrop>}
     <div className="child">
