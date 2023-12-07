@@ -11,14 +11,14 @@ import { RootState } from "../redux/reducers";
 const AddOptions: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [inputOption, setInputOption] = useState<string>("");
-  const { optionId } : any = useParams();
+  const { optionId } = useParams();
   const navigate = useNavigate();
   const getOptions = useSelector((state:RootState)=>state.AdminSlice)
 
   const handleFormSubmit = (e : FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    const isDuplicate = getOptions.data.some((poll : any) => poll.options.some((option) => option.option === inputOption.trim()));
+    const isDuplicate = getOptions.data.some((poll) => poll.options.some((option) => option.option === inputOption.trim()));
     if (inputOption.trim() !== "" && !isDuplicate) {
       dispatch(optionsAdd(inputOption, optionId));
       navigate("/Admin");

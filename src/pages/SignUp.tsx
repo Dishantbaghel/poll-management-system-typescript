@@ -15,9 +15,17 @@ interface SignUpValues {
   role: string;
 }
 
+interface SignUpState {
+  isLoading: boolean;
+  isSuccess: boolean;
+  data: {
+    message?: string | null;
+  };
+}
+
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
-  const signupSlice : any = useSelector((state: RootState) => state.SignUpSlice);
+  const signupSlice  = useSelector((state: RootState) => state.SignUpSlice) as SignUpState;
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {

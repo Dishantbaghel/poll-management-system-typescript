@@ -9,16 +9,14 @@ interface SignupState {
   data: string[];
 }
 
-const initialState: SignupState = {
-  isLoading: false,
-  isSuccess: false,
-  isError: false,
-  data: [],
-};
-
 const signupSlice = createSlice({
   name: "signup",
-  initialState,
+  initialState : {
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+    data: [],
+  } as SignupState,
   reducers: {
     startLoading(state) {
       state.isLoading = true;
