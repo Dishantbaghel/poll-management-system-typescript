@@ -43,7 +43,7 @@ const VoteSlice = createSlice({
   },
 });
 
-export const vote = (id: string, option: string, header: any) => async (
+export const vote = (id: string, option: string, header) => async (
   dispatch: AppDispatch
 ) => {
   dispatch(VoteSlice.actions.startLoading());

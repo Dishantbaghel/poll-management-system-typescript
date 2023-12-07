@@ -7,17 +7,27 @@ import { Backdrop, CircularProgress, TablePagination } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppDispatch } from "../redux/Store";
-import { RootState } from "../redux/reducers";
 
-interface Option {
-  option: string;
+interface PollListInter{
+  AdminSlice:{
+    data:Array<{
+      title: string;
+      _id:string;
+      options:Array<{
+        option:string;
+        vote:number
+      }>;
+    }>;
+    isSuccess: boolean;
+    isLoading: boolean;
+  }
 }
 
 const Home: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const dispatch: AppDispatch = useDispatch();
   const [rowsPerPageOption, setRowsPerPageOption] = useState<number[]>([5, 10, 15]);
-  const adminSliceData = useSelector((state: RootState) => state.AdminSlice);
+  const adminSliceData = useSelector((state: PollListInter) => state.AdminSlice);
   const navigate = useNavigate();
   const [disabledOptions, setDisabledOptions] = useState<{ [key: string]: boolean }>({});
 
@@ -37,7 +47,7 @@ const Home: React.FC = () => {
     }
 
     const disabledOptionsFromStorage: { [key: string]: boolean } = {};
-    adminSliceData.data.forEach((dataList: any) => {
+    adminSliceData.data.forEach((dataList) => {
       const storedVote = localStorage.getItem(`vote_${dataList._id}`);
       disabledOptionsFromStorage[dataList._id] = storedVote !== null;
     });
@@ -109,7 +119,7 @@ const Home: React.FC = () => {
             <div className="col">
               {adminSliceData.data
                 .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                .map((dataList: any) => (
+                .map((dataList) => (
                   <div className="card mt-3" key={dataList._id}>
                     <div
                       className="card-header "
@@ -123,7 +133,7 @@ const Home: React.FC = () => {
                       </h5>
                     </div>
                     <div className="card-body">
-                      {dataList.options.map((option: Option) => (
+                      {dataList.options.map((option) => (
                         <div className="form-check" key={option.option}>
                           <div className="d-flex justify-content-between">
                             <div

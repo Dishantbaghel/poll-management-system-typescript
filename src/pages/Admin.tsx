@@ -12,12 +12,25 @@ import { Backdrop, CircularProgress, TablePagination } from "@mui/material";
 import "./admin.css";
 import { RootState } from "../redux/reducers";
 
+interface PollListInter{
+  AdminSlice:{
+    data:Array<{
+      title: string;
+      _id:string;
+      options:Array<{
+        option:string;
+        vote:number
+      }>;
+    }>;
+  }
+}
+
 const Admin: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [deletePollTitle, setDeletePollTitle] = useState<string | null>(null);
   const [deletePollOption, setDeletePollOption] = useState<string | null>(null);
 
-  const listItems = useSelector((state: RootState) => state.AdminSlice.data);
+  const listItems = useSelector((state: PollListInter) => state.AdminSlice.data);
   const [page, setPage] = useState<number>(() => {
     const storedPage = JSON.parse(localStorage.getItem("page") || "0");
     return storedPage || 0;
@@ -118,7 +131,7 @@ const Admin: React.FC = () => {
             <div className="col">
               {listItems
                 .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                .map((dataList : any) => (
+                .map((dataList) => (
                   <div className="card mt-3" key={dataList._id}>
                     <div
                       className="card-header "

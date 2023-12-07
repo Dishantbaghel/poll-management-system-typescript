@@ -12,7 +12,7 @@ const EditPoll: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [inputTitle, setInputTitle] = useState("");
   const [disableSaveBtn, setDisableSaveBtn] = useState(true);
-  const { edittitleId }: any = useParams();
+  const { edittitleId } = useParams() as {edittitleId : string}
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ const EditPoll: React.FC = () => {
     setInputTitle(location.state);
   }, [location.state]);
 
-  const handleFormSubmit = (e : any) => {
+  const handleFormSubmit = (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputTitle.trim() !== "") {
       dispatch(updateTitle(inputTitle, edittitleId));
@@ -39,7 +39,7 @@ const EditPoll: React.FC = () => {
     }
   };
 
-  const handleTitle = (e: any) => {
+  const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisableSaveBtn(false);
     setInputTitle(e.target.value);
   };

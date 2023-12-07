@@ -10,7 +10,6 @@ import { RootState } from "../redux/reducers";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignIn: React.FC = () => {
-  const ref : any  = useRef(null);
   const location = useLocation();
   const signinValues = location.state
   const [username, setUserName] = useState<string>(signinValues ? signinValues.name : '');

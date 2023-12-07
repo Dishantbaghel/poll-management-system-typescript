@@ -11,7 +11,7 @@ import { RootState } from "../redux/reducers";
 const AddOptions: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [inputOption, setInputOption] = useState<string>("");
-  const { optionId } = useParams();
+  const { optionId } = useParams() as { optionId : string}
   const navigate = useNavigate();
   const getOptions = useSelector((state:RootState)=>state.AdminSlice)
 

@@ -49,7 +49,7 @@ const AddPolls: React.FC = () => {
     navigate("/Admin");
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleChange = (event, index: number) => {
     const { name, value } = event.target;
     const updatedOptions = [...newOptions];
     updatedOptions[index][name] = value;
@@ -86,7 +86,7 @@ const AddPolls: React.FC = () => {
                 name="option"
                 type="text"
                 value={option.option}
-                onChange={(event : any) => handleChange(event, index)}
+                onChange={(event) => handleChange(event, index)}
               />
             </div>
           ))}
