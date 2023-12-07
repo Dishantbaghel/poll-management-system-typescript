@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../utilities/axios';
+import { AppDispatch } from '../Store';
 
 interface StateType {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: Record<string, any>;
+  data: string[];
 }
 
 const VoteSlice = createSlice({
@@ -22,7 +23,7 @@ const VoteSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
     },
-    loginSuccess(state, action: PayloadAction<any>) {
+    loginSuccess(state, action: PayloadAction<string[]>) {
       state.isLoading = false;
       state.isError = false;
       state.isSuccess = true;
@@ -37,20 +38,19 @@ const VoteSlice = createSlice({
       state.isError = false;
       state.isLoading = false;
       state.isSuccess = false;
-      state.data = {};
+      state.data = [];
     },
   },
 });
 
 export const vote = (id: string, option: string, header: any) => async (
-  dispatch: any
+  dispatch: AppDispatch
 ) => {
   dispatch(VoteSlice.actions.startLoading());
   try {
     const response = await axiosInstance.get(
       `do_vote?id=${id}&option_text=${option}`,
       header,
-      { id, option }
     );
     dispatch(VoteSlice.actions.loginSuccess(response.data));
   } catch (error) {

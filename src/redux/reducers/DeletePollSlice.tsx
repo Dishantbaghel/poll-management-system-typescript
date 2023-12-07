@@ -5,13 +5,12 @@ interface StateType {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: Record<string, any>;
+  data: string [];
 }
 
 export const deletePoll = createAsyncThunk('deletePoll/deletePoll', async (id: string) => {
   try {
     const response = await axiosInstance.delete(`delete_poll?id=${id}`, {
-      id,
     });
     return response.data;
   } catch (e) {
@@ -34,7 +33,7 @@ const deletePollSlice = createSlice({
         state.isLoading = true;
         state.isError = false;
       })
-      .addCase(deletePoll.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(deletePoll.fulfilled, (state, action: PayloadAction<string[]>) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.data = action.payload;

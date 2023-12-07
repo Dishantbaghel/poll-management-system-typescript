@@ -6,7 +6,7 @@ interface StateType {
   isLoading : boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: Record<string, any>;
+  data: string[];
 }
 
 const AddPollSlice = createSlice({
@@ -15,20 +15,20 @@ const AddPollSlice = createSlice({
         isLoading: false,
         isSuccess: false,
         isError: false,
-        data: {},
+        data: [],
       } as StateType,
     reducers: {
       startLoading(state) {
         state.isLoading = true;
         state.isError = false;
       },
-      loginSuccess(state, action : PayloadAction<any>) {
+      loginSuccess(state, action : PayloadAction<string []>) {
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
         state.data = { ...action.payload };
       },
-      hasError(state, action : PayloadAction<any>) {
+      hasError(state, action : PayloadAction<string []>) {
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;
@@ -38,7 +38,7 @@ const AddPollSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = false;
-        state.data = {};
+        state.data = [];
       },
     },
   });

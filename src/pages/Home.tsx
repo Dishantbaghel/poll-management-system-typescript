@@ -13,12 +13,6 @@ interface Option {
   option: string;
 }
 
-interface PollData {
-  _id: string;
-  title: string;
-  options: Option[];
-}
-
 const Home: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const dispatch: AppDispatch = useDispatch();
@@ -43,7 +37,7 @@ const Home: React.FC = () => {
     }
 
     const disabledOptionsFromStorage: { [key: string]: boolean } = {};
-    adminSliceData.data.forEach((dataList: PollData) => {
+    adminSliceData.data.forEach((dataList: any) => {
       const storedVote = localStorage.getItem(`vote_${dataList._id}`);
       disabledOptionsFromStorage[dataList._id] = storedVote !== null;
     });
@@ -115,7 +109,7 @@ const Home: React.FC = () => {
             <div className="col">
               {adminSliceData.data
                 .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                .map((dataList: PollData) => (
+                .map((dataList: any) => (
                   <div className="card mt-3" key={dataList._id}>
                     <div
                       className="card-header "

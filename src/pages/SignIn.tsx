@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetReducer } from "../redux/reducers/LoginSlice";
 import { jwtDecode } from "jwt-decode";
@@ -10,8 +10,11 @@ import { RootState } from "../redux/reducers";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignIn: React.FC = () => {
-  const [username, setUserName] = useState<string>("");
-  const [password, setUserPass] = useState<string>("");
+  const ref : any  = useRef(null);
+  const location = useLocation();
+  const signinValues = location.state
+  const [username, setUserName] = useState<string>(signinValues ? signinValues.name : '');
+  const [password, setUserPass] = useState<string>(signinValues ? signinValues.password : '');
 
   const navigate = useNavigate();
   const loginSlice = useSelector((state: RootState) => state.loginSlice) ;

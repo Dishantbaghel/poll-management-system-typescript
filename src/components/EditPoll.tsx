@@ -1,4 +1,5 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import * as React from 'react';
+ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { AppDispatch } from "../redux/Store";
 import { updateTitle } from "../redux/reducers/EditPollSlice";
@@ -7,11 +8,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 
-const EditPoll = () => {
+const EditPoll: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [inputTitle, setInputTitle] = useState("");
   const [disableSaveBtn, setDisableSaveBtn] = useState(true);
-  const { edittitleId } = useParams();
+  const { edittitleId }: any = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,7 +20,7 @@ const EditPoll = () => {
     setInputTitle(location.state);
   }, [location.state]);
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e : any) => {
     e.preventDefault();
     if (inputTitle.trim() !== "") {
       dispatch(updateTitle(inputTitle, edittitleId));
@@ -38,8 +39,8 @@ const EditPoll = () => {
     }
   };
 
-  const handleTitle = (e) => {
-    setDisableSaveBtn(false)
+  const handleTitle = (e: any) => {
+    setDisableSaveBtn(false);
     setInputTitle(e.target.value);
   };
 
@@ -48,42 +49,42 @@ const EditPoll = () => {
   };
 
   return (
-    <div className="parent">
-      <div className="child">
-        <h1>EDIT POLL</h1>
-        <form onSubmit={handleFormSubmit}>
-          <label>Update Title: </label>
-          <br />
-          <TextField
-            className="all-inputfield"
-            type="text"
-            value={inputTitle}
-            variant="outlined"
-            onChange={handleTitle}
+      <div className="parent">
+        <div className="child">
+          <h1>EDIT POLL</h1>
+          <form onSubmit={handleFormSubmit}>
+            <label>Update Title: </label>
+            <br />
+            <TextField
+              className="all-inputfield"
+              type="text"
+              value={inputTitle}
+              variant="outlined"
+              onChange={handleTitle}
+            />
+            <br />
+            <br />
+            <button type="submit" className="btn" disabled={disableSaveBtn}>
+              Save
+            </button>
+            <button className="btn" onClick={handleHome}>
+              Back
+            </button>
+          </form>
+          <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
           />
-          <br />
-          <br />
-          <button type="submit" className="btn" disabled={disableSaveBtn}>
-            Save
-          </button>
-          <button className="btn" onClick={handleHome}>
-            Back
-          </button>
-        </form>
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
+        </div>
       </div>
-    </div>
   );
 };
 

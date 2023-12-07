@@ -6,7 +6,7 @@ interface StateType {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: any[];
+  data: string[];
 }
 
 const optionsSlice = createSlice({
@@ -15,20 +15,20 @@ const optionsSlice = createSlice({
     isLoading: false,
     isSuccess: false,
     isError: false,
-    data: {},
+    data: [],
   } as StateType,
   reducers: {
     startLoading(state) {
       state.isLoading = true;
       state.isError = false;
     },
-    loginSuccess(state, action: PayloadAction<any>) {
+    loginSuccess(state, action: PayloadAction<string[]>) {
       state.isLoading = false;
       state.isError = false;
       state.isSuccess = true;
       state.data = { ...action.payload };
     },
-    hasError(state, action: PayloadAction<any>) {
+    hasError(state, action: PayloadAction<string[]>) {
       state.isError = true;
       state.isLoading = false;
       state.isSuccess = false;

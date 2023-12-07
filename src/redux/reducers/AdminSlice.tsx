@@ -6,7 +6,7 @@ interface StateType {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: any[];
+  data: string[];
 }
 
 const AdminSlice = createSlice({
@@ -22,13 +22,13 @@ const AdminSlice = createSlice({
       state.isLoading = true;
       state.isError = false;
     },
-    loginSuccess(state, action: PayloadAction<{ data: any[] }>) {
+    loginSuccess(state, action: PayloadAction<{ data: string[] }>) {
       state.isLoading = false;
       state.isError = false;
       state.isSuccess = true;
       state.data = action.payload.data.reverse();
     },
-    hasError(state, action: PayloadAction<any>) {
+    hasError(state, action: PayloadAction<string []>) {
       state.isError = true;
       state.isLoading = false;
       state.isSuccess = false;
