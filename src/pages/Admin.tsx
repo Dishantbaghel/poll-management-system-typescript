@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchedAllPolls } from "../redux/reducers/AdminSlice";
-import { dispatch } from "../redux/Store";
+import { AppDispatch } from "../redux/Store";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -10,58 +10,69 @@ import { deleteOption } from "../redux/reducers/DeleteOptionSlice";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Backdrop, CircularProgress, TablePagination } from "@mui/material";
 import "./admin.css";
+import { RootState } from "../redux/reducers";
 
-const Admin = () => {
-  const [deletePollTitle, setDeletePollTitle] = useState(null); 
-  const [deletePollOption, setDeletePollOption] = useState(null);
+interface PollListInter{
+  AdminSlice:{
+    data:Array<{
+      title: string;
+      _id:string;
+      options:Array<{
+        option:string;
+        vote:number
+      }>;
+    }>;
+  }
+}
 
-  const listItems = useSelector((state) => state.AdminSlice.data);
-  const [page, setPage] = useState(() => {
-    const storedPage = JSON.parse(localStorage.getItem("page"));
+const Admin: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const [deletePollTitle, setDeletePollTitle] = useState<string | null>(null);
+  const [deletePollOption, setDeletePollOption] = useState<string | null>(null);
+
+  const listItems = useSelector((state: PollListInter) => state.AdminSlice.data);
+  const [page, setPage] = useState<number>(() => {
+    const storedPage = JSON.parse(localStorage.getItem("page") || "0");
     return storedPage || 0;
   });
 
-  const navigate = useNavigate()
-  const [rowsPerPageOption, setRowsPerPageOption] = useState([5, 10, 15]);
+  const navigate = useNavigate();
+  const [rowsPerPageOption, setRowsPerPageOption] = useState<number[]>([5, 10, 15]);
 
   const row = () => {
     if (localStorage.getItem("rowpage")) {
-      return JSON.parse(localStorage.getItem("rowpage"));
+      return JSON.parse(localStorage.getItem("rowpage") || "5");
     }
     return 5;
   };
-  const [rowPerPage, setRowPerPage] = useState(row());
+  const [rowPerPage, setRowPerPage] = useState<number>(row());
   useEffect(() => {
-    localStorage.setItem("page", page);
-    localStorage.setItem("rowpage", rowPerPage);
+    localStorage.setItem("page", page.toString());
+    localStorage.setItem("rowpage", rowPerPage.toString());
   }, [page, rowPerPage]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("page"));
+    const data = JSON.parse(localStorage.getItem("page") || "0");
     if (data) {
       setPage(parseInt(data));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("page", page);
-    localStorage.setItem("rowpage", rowPerPage);
+    localStorage.setItem("page", page.toString());
+    localStorage.setItem("rowpage", rowPerPage.toString());
   }, [page, rowPerPage]);
 
-  const deleteSingleOption = useSelector(
-    (state) => state.DeleteOptionSlice.isLoading
-  );
-  const deleteSinglePoll = useSelector(
-    (state) => state.DeletePollSlice.isLoading
-  );
+  const deleteSingleOption = useSelector((state: RootState) => state.DeleteOptionSlice.isLoading);
+  const deleteSinglePoll = useSelector((state: RootState) => state.DeletePollSlice.isLoading);
 
-  const add = useSelector((state) => state.AddPollSlice.isLoading);
-  const addOption = useSelector((state) => state.AddOptionSlice.isLoading);
-  const editTitle = useSelector((state) => state.OptionsSlice.isLoading);
+  const add = useSelector((state: RootState) => state.AddPollSlice.isLoading);
+  const addOption = useSelector((state: RootState) => state.AddOptionSlice.isLoading);
+  const editTitle = useSelector((state: RootState) => state.OptionsSlice.isLoading);
 
   const isLoading = add || addOption || editTitle;
 
-  const [open, setOpen] = useState(isLoading);
+  const [open, setOpen] = useState<boolean>(isLoading);
 
   useEffect(() => {
     setOpen(isLoading);
@@ -71,27 +82,28 @@ const Admin = () => {
     dispatch(fetchedAllPolls());
   }, [deleteSingleOption, deleteSinglePoll, add, addOption, editTitle]);
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     setDeletePollTitle(id);
     dispatch(deletePoll(id));
   };
 
-  const handleDeleteOption = (id, opt) => {
+  const handleDeleteOption = (id: string, opt: string) => {
     setDeletePollOption(opt);
     dispatch(deleteOption(id, opt));
   };
 
-  const handleChangePage = (event, updatePage) => setPage(updatePage);
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, updatePage: number) =>
+    setPage(updatePage);
 
-  const handleRowPerPage = (event) => {
-    setRowPerPage(event.target.value);
+  const handleRowPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowPerPage(parseInt(event.target.value));
     setPage(0);
   };
 
-  const handleLogout = () =>{
+  const handleLogout = () => {
     localStorage.clear();
-    navigate("/")
-  } 
+    navigate("/");
+  };
 
   return (
     <div className="admin-parent">
@@ -101,9 +113,9 @@ const Admin = () => {
           <NavLink to={"/AddPolls"}>
             <button className="btn">Add Poll</button>
           </NavLink>
-            <div onClick={handleLogout} className="btn">
-              Log Out
-            </div>
+          <div onClick={handleLogout} className="btn">
+            Log Out
+          </div>
         </div>
         {open && (
           <Backdrop
@@ -149,7 +161,7 @@ const Admin = () => {
                         </NavLink>
 
                         {deletePollTitle === dataList._id ? (
-                          <CircularProgress size="2rem"/>
+                          <CircularProgress size="2rem" />
                         ) : (
                           <DeleteIcon
                             className={"icon-btns"}
@@ -166,9 +178,7 @@ const Admin = () => {
                               className="poll-options"
                               style={{ wordWrap: "break-word" }}
                             >
-                              <div className="single-option">
-                                {option.option}
-                              </div>
+                              <div className="single-option">{option.option}</div>
                               <div
                                 style={{
                                   display: "flex",
@@ -178,16 +188,11 @@ const Admin = () => {
                                 <div>vote:{option.vote} </div>
 
                                 {deletePollOption === option.option ? (
-                                  <CircularProgress size="2rem"/>
+                                  <CircularProgress size="2rem" />
                                 ) : (
                                   <DeleteIcon
                                     className={"icon-btns"}
-                                    onClick={() =>
-                                      handleDeleteOption(
-                                        dataList._id,
-                                        option.option
-                                      )
-                                    }
+                                    onClick={() => handleDeleteOption(dataList._id, option.option)}
                                   />
                                 )}
                               </div>

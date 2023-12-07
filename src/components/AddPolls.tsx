@@ -1,14 +1,20 @@
 import React, { useState } from "react";
 import { AddPoll } from "../redux/reducers/AddPollSlice";
 import { useNavigate } from "react-router-dom";
-import { dispatch } from "../redux/Store";
+import { AppDispatch } from "../redux/Store";
 import { TextField } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
 
-const AddPolls = () => {
-  const [title, setTitle] = useState("");
-  const [newOptions, setNewOptions] = useState([{ option: "" }]);
+interface Option {
+  option: string;
+}
+
+const AddPolls: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const [title, setTitle] = useState<string>("");
+  const [newOptions, setNewOptions] = useState<Option[]>([{ option: "" }]);
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -19,7 +25,7 @@ const AddPolls = () => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (title.trim() === "") {
@@ -43,20 +49,20 @@ const AddPolls = () => {
     navigate("/Admin");
   };
 
-  const handleChange = (event, index) => {
+  const handleChange = (event, index: number) => {
     const { name, value } = event.target;
     const updatedOptions = [...newOptions];
     updatedOptions[index][name] = value;
     setNewOptions(updatedOptions);
   };
-  
-  const updatedInput = (event) => {
+
+  const updatedInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value.trim());
   };
 
   const handleCancel = () => navigate("/Admin");
 
-  const showError = (message) => {
+  const showError = (message: string) => {
     toast.error(message, { position: "top-center", autoClose: 2000, theme: "colored" });
   };
 
@@ -64,7 +70,6 @@ const AddPolls = () => {
     <div className="parent">
       <div className="child">
         <form autoComplete="off" onSubmit={handleSubmit}>
-        
           <label>Title:</label>
           <TextField
             type="text"

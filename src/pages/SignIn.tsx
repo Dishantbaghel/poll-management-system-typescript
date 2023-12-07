@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetReducer } from "../redux/reducers/LoginSlice";
 import { jwtDecode } from "jwt-decode";
 import { Backdrop, CircularProgress, TextField } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
+import { AppDispatch } from '../redux/Store';
+import { RootState } from "../redux/reducers";
 import "react-toastify/dist/ReactToastify.css";
 
-const SignIn = () => {
-  const [username, setUserName] = useState("");
-  const [password, setUserPass] = useState("");
+const SignIn: React.FC = () => {
+  const location = useLocation();
+  const signinValues = location.state
+  const [username, setUserName] = useState<string>(signinValues ? signinValues.name : '');
+  const [password, setUserPass] = useState<string>(signinValues ? signinValues.password : '');
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const loginSlice = useSelector((state) => state.loginSlice);
-  const status = useSelector((state) => state.loginSlice.isLoading);
+  const loginSlice = useSelector((state: RootState) => state.loginSlice) ;
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    if (loginSlice.isSuccess && loginSlice.data.token) {
-      const decoded = jwtDecode(loginSlice.data.token);
-      localStorage.setItem("token", loginSlice.data.token);
+    if (loginSlice.isSuccess && 'token' in loginSlice.data) {
+      const decoded = jwtDecode((loginSlice.data as { token: string }).token) as { role: string };
+      localStorage.setItem("token", (loginSlice.data as { token: string }).token);
       localStorage.setItem("role", decoded.role.toLowerCase());
       dispatch(resetReducer());
 
@@ -27,15 +30,14 @@ const SignIn = () => {
         navigate("/admin");
       } else if (decoded.role === "guest") {
         navigate("/home");
-      } 
-    }
-    else if (loginSlice.data.error === 1) {
+      }
+    } else if ('error' in loginSlice.data && loginSlice.data.error === 1) {
       toast.error("🦄 User does not exist!");
     }
-    dispatch(resetReducer())
+    dispatch(resetReducer());
   }, [loginSlice.isSuccess]);
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (username.trim() === "" || password.trim() === "") {
       toast.error("🦄 InputField cannot be empty!", {
@@ -48,24 +50,23 @@ const SignIn = () => {
         progress: undefined,
         theme: "colored",
       });
-    } 
-    else if (!loginSlice.data.token) {
-      dispatch(resetReducer())
+    } else if ('token' in loginSlice.data) {
+      dispatch(resetReducer());
     }
 
-      const userCredentials = {
-        username,
-        password,
-      };
-      dispatch(login(userCredentials));
+    const userCredentials = {
+      username,
+      password,
+    };
+    dispatch(login(userCredentials));
   };
 
   return (
     <div className="parent">
-      {status && (
+      {loginSlice.isLoading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={status}
+          open={loginSlice.isLoading}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
@@ -85,7 +86,7 @@ const SignIn = () => {
           />
           <br />
           <br />
-          <label>Password: </label>
+          <label>Password:</label>
           <br />
           <TextField
             className="all-inputfield"

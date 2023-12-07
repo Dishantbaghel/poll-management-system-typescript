@@ -1,19 +1,21 @@
 import { TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { dispatch } from "../redux/Store";
+import { AppDispatch } from "../redux/Store";
 import { optionsAdd } from "../redux/reducers/AddOptionSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from "../redux/reducers";
 
-const AddOptions = () => {
-  const [inputOption, setInputOption] = useState("");
-  const { optionId } = useParams();
+const AddOptions: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const [inputOption, setInputOption] = useState<string>("");
+  const { optionId } = useParams() as { optionId : string}
   const navigate = useNavigate();
-  const getOptions = useSelector((state)=>state.AdminSlice)
+  const getOptions = useSelector((state:RootState)=>state.AdminSlice)
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e : FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
     const isDuplicate = getOptions.data.some((poll) => poll.options.some((option) => option.option === inputOption.trim()));
