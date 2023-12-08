@@ -9,7 +9,7 @@ import { deletePoll } from "../redux/reducers/DeletePollSlice";
 import { deleteOption } from "../redux/reducers/DeleteOptionSlice";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Backdrop, CircularProgress, TablePagination } from "@mui/material";
-import "./admin.css";
+import '../styles/admin.scss';
 import { RootState } from "../redux/reducers";
 
 interface PollListInter{

@@ -57,7 +57,7 @@ const AddPolls: React.FC = () => {
   };
 
   const updatedInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value.trim());
+    setTitle(event.target.value);
   };
 
   const handleCancel = () => navigate("/Admin");
